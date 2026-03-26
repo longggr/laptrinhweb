@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý ngành học{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <h2>Danh sách ngành học</h2>
+        <a href="{{ url_for('majors.add_major') }}" class="btn-action">Thêm ngành học</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mã ngành</th>
+                <th>Tên ngành</th>
+                <th>Mô tả</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in majors %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.ma_nganh }}</td>
+                <td>{{ item.ten_nganh }}</td>
+                <td>{{ item.mo_ta or '' }}</td>
+                <td>
+                    <a href="{{ url_for('majors.edit_major', id=item.id) }}" class="btn-small">Sửa</a>
+                    <form method="POST" action="{{ url_for('majors.delete_major', id=item.id) }}" class="inline-form">
+                        <button type="submit" class="btn-small btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Chưa có ngành học nào.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

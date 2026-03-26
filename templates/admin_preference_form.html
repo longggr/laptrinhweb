@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if preference %}Sửa nguyện vọng{% else %}Thêm nguyện vọng{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <h2>
+        {% if preference %}Sửa nguyện vọng{% else %}Thêm nguyện vọng{% endif %}
+    </h2>
+
+    <form method="POST" class="form-grid">
+        <div class="form-group">
+            <label>Thí sinh</label>
+            <select name="thi_sinh_id" required>
+                <option value="">-- Chọn thí sinh --</option>
+                {% for candidate in candidates %}
+                    <option value="{{ candidate.id }}"
+                        {% if preference and preference.thi_sinh_id == candidate.id %}selected{% endif %}>
+                        {{ candidate.ho_ten }} - {{ candidate.sbd }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ngành học</label>
+            <select name="nganh_id" required>
+                <option value="">-- Chọn ngành --</option>
+                {% for major in majors %}
+                    <option value="{{ major.id }}"
+                        {% if preference and preference.nganh_id == major.id %}selected{% endif %}>
+                        {{ major.ma_nganh }} - {{ major.ten_nganh }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Thứ tự</label>
+            <input
+                type="number"
+                name="thu_tu"
+                min="1"
+                required
+                value="{% if preference %}{{ preference.thu_tu }}{% endif %}">
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn-submit">
+                {% if preference %}Cập nhật{% else %}Thêm mới{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

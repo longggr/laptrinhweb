@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if major %}Sửa ngành học{% else %}Thêm ngành học{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <h2>
+        {% if major %}Sửa ngành học{% else %}Thêm ngành học{% endif %}
+    </h2>
+
+    <form method="POST" class="form-grid">
+        <div class="form-group">
+            <label>Mã ngành</label>
+            <input type="text" name="ma_nganh" value="{{ major.ma_nganh if major else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Tên ngành</label>
+            <input type="text" name="ten_nganh" value="{{ major.ten_nganh if major else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mô tả</label>
+            <input type="text" name="mo_ta" value="{{ major.mo_ta if major else '' }}">
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn-submit">
+                {% if major %}Cập nhật{% else %}Thêm mới{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

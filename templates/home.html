@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <h1>Hệ thống quản lý hồ sơ thí sinh xét tuyển</h1>
+
+    {% if session.get("user_id") %}
+        <p>Xin chào, <strong>{{ session.get("display_name") }}</strong>.</p>
+        <p>Vai trò: <strong>{{ session.get("role") }}</strong></p>
+    {% else %}
+        <p>Vui lòng đăng nhập để sử dụng hệ thống.</p>
+    {% endif %}
+</div>
+{% endblock %}

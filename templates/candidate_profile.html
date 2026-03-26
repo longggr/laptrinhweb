@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ sơ thí sinh{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+
+    <form method="POST">
+
+        <!-- Thông tin cá nhân -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Thông tin cá nhân</h3>
+            </div>
+            <div class="section-body info-grid">
+                <div class="info-col">
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" name="ho_ten" value="{{ candidate.ho_ten or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CCCD</label>
+                        <input type="text" value="{{ candidate.cccd or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <input type="text" name="gioi_tinh" value="{{ candidate.gioi_tinh or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nơi sinh</label>
+                        <input type="text" name="noi_sinh" value="{{ candidate.noi_sinh or '' }}">
+                    </div>
+                </div>
+
+                <div class="info-col">
+                    <div class="form-group">
+                        <label>Số báo danh</label>
+                        <input type="text" value="{{ candidate.sbd or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ngày sinh</label>
+                        <input type="date" name="ngay_sinh" value="{{ candidate.ngay_sinh or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dân tộc</label>
+                        <input type="text" name="dan_toc" value="{{ candidate.dan_toc or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Khu vực ưu tiên</label>
+                        <input type="text" value="{{ candidate.khu_vuc_uu_tien or '' }}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hộ khẩu -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Hộ khẩu &amp; Trường THPT</h3>
+            </div>
+            <div class="section-body info-grid">
+                <div class="info-col">
+                    <div class="form-group">
+                        <label>Tỉnh/TP</label>
+                        <input type="text" name="tinh_tp" value="{{ candidate.tinh_tp or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Năm tốt nghiệp</label>
+                        <input type="text" value="{{ candidate.nam_tot_nghiep or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hạnh kiểm</label>
+                        <input type="text" value="{{ candidate.hanh_kiem or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mã tỉnh lớp 12</label>
+                        <input type="text" value="{{ candidate.ma_tinh_lop_12 or '' }}" readonly>
+                    </div>
+                </div>
+
+                <div class="info-col">
+                    <div class="form-group">
+                        <label>Quận/Huyện</label>
+                        <input type="text" name="quan_huyen" value="{{ candidate.quan_huyen or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Học lực</label>
+                        <input type="text" value="{{ candidate.hoc_luc or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Điểm TB lớp 12</label>
+                        <input type="text" value="{{ candidate.diem_tb_lop_12 or '' }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mã trường lớp 12</label>
+                        <input type="text" value="{{ candidate.ma_truong_lop_12 or '' }}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-body">
+                <button type="submit" class="btn-submit profile-save-btn">Cập nhật hồ sơ</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

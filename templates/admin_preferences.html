@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách nguyện vọng{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <h2>Danh sách nguyện vọng đã đăng ký</h2>
+    </div>
+
+    <form method="GET" class="form-grid">
+        <div class="form-group">
+            <label>Tìm theo họ tên, SBD, CCCD, mã ngành, tên ngành</label>
+            <input type="text" name="keyword" value="{{ keyword or '' }}">
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn-submit">Tìm kiếm</button>
+        </div>
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Họ tên</th>
+                <th>SBD</th>
+                <th>CCCD</th>
+                <th>Thứ tự</th>
+                <th>Mã ngành</th>
+                <th>Tên ngành</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in preferences %}
+            <tr>
+                <td>{{ item.ho_ten }}</td>
+                <td>{{ item.sbd }}</td>
+                <td>{{ item.cccd }}</td>
+                <td>{{ item.thu_tu }}</td>
+                <td>{{ item.ma_nganh }}</td>
+                <td>{{ item.ten_nganh }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">Không có dữ liệu.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>{% block title %}Hệ thống xét tuyển{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-left">
+            <a href="/" class="logo">🎓 NEU</a>
+        </div>
+
+        <nav class="navbar-menu">
+            {% if session.get("user_id") %}
+                {% if session.get("role") == "candidate" %}
+                    <a href="/">Trang chủ</a>
+                    <a href="{{ url_for('search.search_candidate') }}">Tra cứu thí sinh</a>
+                    <a href="{{ url_for('candidates.profile') }}">Hồ sơ thí sinh</a>
+                    <a href="{{ url_for('preferences.candidate_preferences') }}">Nguyện vọng đăng ký</a>
+                {% elif session.get("role") == "admin" %}
+                    <a href="/">Trang chủ</a>
+                    <a href="{{ url_for('candidates.admin_candidates') }}">Thí sinh</a>
+                    <a href="{{ url_for('majors.admin_majors') }}">Ngành học</a>
+                    <a href="{{ url_for('search.search_candidate') }}">Tra cứu</a>
+                {% endif %}
+            {% else %}
+                <a href="/">Trang chủ</a>
+            {% endif %}
+        </nav>
+
+        <div class="navbar-right">
+            {% if session.get("user_id") %}
+                <span class="username">{{ session.get("display_name") }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">Đăng xuất</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn-login">Đăng nhập</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-wrapper">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

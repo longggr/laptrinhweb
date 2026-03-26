@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý thí sinh{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <h2>Danh sách thí sinh</h2>
+        <a href="{{ url_for('candidates.add_candidate') }}" class="btn-action">Thêm thí sinh</a>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>CCCD</th>
+                <th>SBD</th>
+                <th>Mã hồ sơ</th>
+                <th>Họ tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Tỉnh/TP</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in candidates %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.cccd }}</td>
+                <td>{{ item.sbd }}</td>
+                <td>{{ item.ma_ho_so }}</td>
+                <td>
+                    <a href="{{ url_for('candidates.admin_candidate_detail', id=item.id) }}" class="table-link">
+                        {{ item.ho_ten }}
+                    </a>
+                </td>
+                <td>{{ item.ngay_sinh }}</td>
+                <td>{{ item.gioi_tinh }}</td>
+                <td>{{ item.tinh_tp }}</td>
+                <td>
+                    <a href="{{ url_for('candidates.admin_candidate_detail', id=item.id) }}" class="btn-small">Xem / Sửa</a>
+                    <form method="POST" action="{{ url_for('candidates.delete_candidate', id=item.id) }}" class="inline-form">
+                        <button type="submit" class="btn-small btn-danger" onclick="return confirm('Bạn có chắc muốn xóa?')">
+                            Xóa
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="9">Không có dữ liệu thí sinh.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

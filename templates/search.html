@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Tra cứu thí sinh{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <h2 class="page-title">Tra cứu thí sinh</h2>
+
+    <form method="POST" class="form-grid search-form">
+        <div class="form-group">
+            <label>CCCD hoặc Số báo danh</label>
+            <input type="text" name="keyword" required>
+        </div>
+
+        <div class="form-group">
+            <label>Ngày sinh</label>
+            <input type="date" name="ngay_sinh" required>
+        </div>
+
+        <div class="form-group form-button">
+            <button type="submit" class="btn-submit">Tra cứu</button>
+        </div>
+    </form>
+
+    {% if error %}
+        <div class="flash-message error">{{ error }}</div>
+    {% endif %}
+</div>
+
+{% if candidate %}
+    <div class="detail-wrapper">
+
+        <!-- Thông tin cá nhân -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Thông tin cá nhân</h3>
+            </div>
+            <div class="section-body info-grid">
+                <div class="info-col">
+                    <p><span>Họ và tên:</span> <strong>{{ candidate.ho_ten or '' }}</strong></p>
+                    <p><span>CCCD:</span> <strong>{{ candidate.cccd or '' }}</strong></p>
+                    <p><span>Giới tính:</span> <strong>{{ candidate.gioi_tinh or '' }}</strong></p>
+                    <p><span>Nơi sinh:</span> <strong>{{ candidate.noi_sinh or '' }}</strong></p>
+                </div>
+                <div class="info-col">
+                    <p><span>Số báo danh:</span> <strong>{{ candidate.sbd or '' }}</strong></p>
+                    <p><span>Ngày sinh:</span> <strong>{{ candidate.ngay_sinh or '' }}</strong></p>
+                    <p><span>Dân tộc:</span> <strong>{{ candidate.dan_toc or '' }}</strong></p>
+                    <p><span>Khu vực ưu tiên:</span> <strong>{{ candidate.khu_vuc_uu_tien or '' }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hộ khẩu & Trường THPT -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Hộ khẩu &amp; Trường THPT</h3>
+            </div>
+            <div class="section-body info-grid">
+                <div class="info-col">
+                    <p><span>Tỉnh/TP:</span> <strong>{{ candidate.tinh_tp or '' }}</strong></p>
+                    <p><span>Năm TN THPT:</span> <strong>{{ candidate.nam_tot_nghiep or '' }}</strong></p>
+                    <p><span>Hạnh kiểm:</span> <strong>{{ candidate.hanh_kiem or '' }}</strong></p>
+                    <p><span>Mã tỉnh lớp 12:</span> <strong>{{ candidate.ma_tinh_lop_12 or '' }}</strong></p>
+                </div>
+                <div class="info-col">
+                    <p><span>Quận/Huyện:</span> <strong>{{ candidate.quan_huyen or '' }}</strong></p>
+                    <p><span>Học lực:</span> <strong>{{ candidate.hoc_luc or '' }}</strong></p>
+                    <p><span>Điểm TB lớp 12:</span> <strong>{{ candidate.diem_tb_lop_12 or '' }}</strong></p>
+                    <p><span>Mã trường lớp 12:</span> <strong>{{ candidate.ma_truong_lop_12 or '' }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Điểm các môn -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Điểm các môn</h3>
+            </div>
+            <div class="section-body score-grid score-grid-4">
+                <p><span>Toán:</span> <strong>{{ candidate.diem_toan or 0 }}</strong></p>
+                <p><span>Văn:</span> <strong>{{ candidate.diem_van or 0 }}</strong></p>
+                <p><span>Lý:</span> <strong>{{ candidate.diem_ly or 0 }}</strong></p>
+                <p><span>Ngoại ngữ:</span> <strong>{{ candidate.diem_ngoai_ngu or 0 }}</strong></p>
+                <p><span>Mã môn NN:</span> <strong>{{ candidate.ma_mon_ngoai_ngu or '' }}</strong></p>
+                <p><span>Điểm xét tốt nghiệp:</span> <strong>{{ candidate.diem_xet_tot_nghiep or 0 }}</strong></p>
+            </div>
+        </div>
+
+        <!-- Điểm xét tuyển -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Điểm xét tuyển</h3>
+            </div>
+            <div class="section-body admission-grid">
+                <div class="admission-left">
+                    <div class="admission-row">
+                        <p><span>Điểm thi tốt nghiệp THPT:</span> <strong>{{ candidate.diem_thpt or 0 }}</strong></p>
+                        <p><span>Điểm ĐGNL, ĐGTD:</span> <strong>{{ candidate.diem_dgnl_dgtd or 0 }}</strong></p>
+                    </div>
+                    <div class="admission-row">
+                        <p><span>Điểm Ngoại ngữ CCQT và điểm THPT:</span> <strong>{{ candidate.diem_ccqt_thpt or 0 }}</strong></p>
+                        <p><span>Điểm SAT/ACT:</span> <strong>{{ candidate.diem_sat_act or 0 }}</strong></p>
+                    </div>
+                    <div class="admission-row">
+                        <p><span>PT Khác:</span> <strong>{{ candidate.diem_pt_khac or 0 }}</strong></p>
+                    </div>
+                </div>
+
+                <div class="admission-highlight">
+                    <span>Điểm max xét tuyển</span>
+                    <strong>{{ candidate.diem_max_xet_tuyen or 0 }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nguyện vọng -->
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Nguyện vọng đăng ký</h3>
+            </div>
+            <div class="section-body">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Thứ tự</th>
+                            <th>Mã ngành</th>
+                            <th>Tên ngành</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in preferences %}
+                        <tr>
+                            <td>{{ item.thu_tu }}</td>
+                            <td>{{ item.ma_nganh }}</td>
+                            <td>{{ item.ten_nganh }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3">Chưa có nguyện vọng.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endif %}
+{% endblock %}
