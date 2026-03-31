@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - Hệ thống xét tuyển NEU{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="breadcrumb-nav">
+    <div class="breadcrumb-container">
+        <a href="/">🏠 Trang chủ</a>
+        <span>/</span>
+        <span>{{ article.category }}</span>
+        <span>/</span>
+        <span class="active">{{ article.title }}</span>
+    </div>
+</div>
+
+<!-- Article Header -->
+<div class="article-header" style="background: {{ article.color }}; background-attachment: fixed;">
+    <div class="article-header-content">
+        <div class="article-meta">
+            <span class="tag {{ article.category_class }}">{{ article.category }}</span>
+            <span class="article-date">📅 {{ article.date }}</span>
+            <span class="article-read-time">~5 phút đọc</span>
+        </div>
+        <h1 class="article-title">{{ article.title }}</h1>
+        <p class="article-description">{{ article.excerpt }}</p>
+    </div>
+</div>
+
+<!-- Article Container -->
+<div class="article-wrapper">
+    <!-- Main Content -->
+    <div class="article-main">
+        <!-- Table of Contents -->
+        <div class="article-toc">
+            <h3>Mục lục</h3>
+            <ul class="toc-list">
+                <li><a href="#intro">Giới thiệu</a></li>
+                <li><a href="#content">Nội dung chính</a></li>
+                <li><a href="#faq">Câu hỏi thường gặp</a></li>
+            </ul>
+        </div>
+
+        <!-- Article Body -->
+        <article class="article-body">
+            <section id="intro">
+                <p class="article-intro">{{ article.excerpt }}</p>
+            </section>
+
+            <section id="content" class="article-content">
+                {{ article.content_html | safe }}
+            </section>
+        </article>
+
+        <!-- Article Footer Meta -->
+        <div class="article-footer-meta">
+            <div class="article-tags">
+                <strong>Thẻ tag:</strong>
+                <a href="#" class="tag-link">#{{ article.category }}</a>
+                <a href="#" class="tag-link">#xét-tuyển</a>
+                <a href="#" class="tag-link">#NEU</a>
+            </div>
+            <div class="article-share">
+                <strong>Chia sẻ:</strong>
+                <button class="share-btn" data-social="facebook" title="Chia sẻ Facebook">🔗 Facebook</button>
+                <button class="share-btn" data-social="twitter" title="Chia sẻ Twitter">🔗 Twitter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="article-sidebar">
+        <!-- Related Articles -->
+        <div class="sidebar-box related-articles">
+            <h3>📰 Bài viết liên quan</h3>
+            <div class="related-list">
+                {% for other_article in articles %}
+                    {% if other_article.id != article.id %}
+                        <div class="related-item">
+                            <span class="related-tag {{ other_article.category_class }}">{{ other_article.category }}</span>
+                            <h4><a href="/article/{{ other_article.id }}">{{ other_article.title }}</a></h4>
+                            <p class="related-date">{{ other_article.date }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="sidebar-box info-box">
+            <h3>💡 Thông tin quan trọng</h3>
+            <ul class="info-list">
+                <li>⏰ Hệ thống cập nhật 24/7</li>
+                <li>📞 Hỗ trợ kỹ thuật: 1900 xxxx</li>
+                <li>📅 Cập nhật gần nhất: {{ article.date }}</li>
+            </ul>
+        </div>
+    </aside>
+</div>
+
+<!-- Back to Home -->
+<div class="article-action">
+    <a href="/" class="btn-back">← Quay lại trang chủ</a>
+</div>
+
+{% endblock %}

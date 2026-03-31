@@ -37,47 +37,20 @@
     </div>
 
     <div class="news-grid">
-        <!-- Article 1 -->
+        {% for article in articles %}
         <div class="news-card">
-            <div class="news-image" style="background: linear-gradient(135deg, #1f5fa5, #2c74c9);"></div>
+            <div class="news-image" style="background: {{ article.color }};"></div>
             <div class="news-body">
                 <div class="news-tags">
-                    <span class="tag tag-primary">Thông báo</span>
+                    <span class="tag {{ article.category_class }}">{{ article.category }}</span>
                 </div>
-                <h3 class="news-title">Kỳ xét tuyển 2026 - Hạn cuối nộp hồ sơ</h3>
-                <p class="news-date">📅 31/03/2026</p>
-                <p class="news-excerpt">Các thí sinh vui lòng hoàn tất nộp hồ sơ trước ngày 30/04/2026. Hỗ trợ xét tuyển theo nhiều danh mục khác nhau.</p>
-                <a href="#" class="btn-read-more">Đọc thêm</a>
+                <h3 class="news-title">{{ article.title }}</h3>
+                <p class="news-date">📅 {{ article.date }}</p>
+                <p class="news-excerpt">{{ article.excerpt }}</p>
+                <a href="/article/{{ article.id }}" class="btn-read-more">Đọc thêm</a>
             </div>
         </div>
-
-        <!-- Article 2 -->
-        <div class="news-card">
-            <div class="news-image" style="background: linear-gradient(135deg, #2c74c9, #1a4a8a);"></div>
-            <div class="news-body">
-                <div class="news-tags">
-                    <span class="tag tag-success">Hướng dẫn</span>
-                </div>
-                <h3 class="news-title">Hướng dẫn sử dụng hệ thống</h3>
-                <p class="news-date">📅 28/03/2026</p>
-                <p class="news-excerpt">Tìm hiểu cách sử dụng hệ thống quản lý hồ sơ xét tuyển mới. Video hướng dẫn chi tiết từng bước.</p>
-                <a href="#" class="btn-read-more">Đọc thêm</a>
-            </div>
-        </div>
-
-        <!-- Article 3 -->
-        <div class="news-card">
-            <div class="news-image" style="background: linear-gradient(135deg, #174a84, #1f5fa5);"></div>
-            <div class="news-body">
-                <div class="news-tags">
-                    <span class="tag tag-info">Cập nhật</span>
-                </div>
-                <h3 class="news-title">Cập nhật danh sách ngành học xét tuyển</h3>
-                <p class="news-date">📅 25/03/2026</p>
-                <p class="news-excerpt">Có 45 ngành học mở tuyển năm nay với nhiều chỉ tiêu chi tiết từng ngành.</p>
-                <a href="#" class="btn-read-more">Đọc thêm</a>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
