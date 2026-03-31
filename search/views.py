@@ -15,6 +15,13 @@ def get_db_connection():
     return conn
 
 
+def normalize_sbd(value):
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    if not digits:
+        return ""
+    return f"SBD{int(digits):06d}"
+
+
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -33,6 +40,7 @@ def search_candidate():
 
     if request.method == "POST":
         keyword = request.form.get("keyword", "").strip()
+        normalized_sbd = normalize_sbd(keyword)
         ngay_sinh = request.form.get("ngay_sinh", "").strip()
 
         conn = get_db_connection()
@@ -41,10 +49,10 @@ def search_candidate():
             """
             SELECT *
             FROM thi_sinh
-            WHERE (cccd = ? OR sbd = ?)
+            WHERE (cccd = ? OR sbd = ? OR sbd = ?)
               AND ngay_sinh = ?
             """,
-            (keyword, keyword, ngay_sinh)
+            (keyword, keyword, normalized_sbd, ngay_sinh)
         ).fetchone()
 
         if candidate:

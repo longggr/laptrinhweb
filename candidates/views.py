@@ -18,6 +18,13 @@ def get_db_connection():
     return conn
 
 
+def normalize_sbd(value):
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    if not digits:
+        return ""
+    return f"SBD{int(digits):06d}"
+
+
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -120,7 +127,7 @@ def admin_candidates():
 def add_candidate():
     if request.method == "POST":
         cccd = request.form.get("cccd")
-        sbd = request.form.get("sbd")
+        sbd = normalize_sbd(request.form.get("sbd"))
         ma_ho_so = request.form.get("ma_ho_so")
         ho_ten = request.form.get("ho_ten")
         ngay_sinh = request.form.get("ngay_sinh")
@@ -196,7 +203,7 @@ def admin_candidate_detail(id):
 
     if request.method == "POST":
         cccd = request.form.get("cccd")
-        sbd = request.form.get("sbd")
+        sbd = normalize_sbd(request.form.get("sbd"))
         ma_ho_so = request.form.get("ma_ho_so")
         ho_ten = request.form.get("ho_ten")
         ngay_sinh = request.form.get("ngay_sinh")

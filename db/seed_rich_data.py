@@ -61,6 +61,13 @@ def next_numeric_seed(values, default_seed):
     return max_value + 1
 
 
+def normalize_sbd(value):
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    if not digits:
+        return ""
+    return f"SBD{int(digits):06d}"
+
+
 def main():
     random.seed(20260331)
     conn = sqlite3.connect(DATABASE)
@@ -116,7 +123,7 @@ def main():
         diem_max = round(max(diem_thpt, diem_ccqt, diem_khac), 2)
 
         cccd = str(cccd_seed + i)
-        sbd = str(sbd_seed + i).zfill(6)
+        sbd = normalize_sbd(sbd_seed + i)
         ma_ho_so = f"HS{hs_seed + i}"
 
         cur.execute(

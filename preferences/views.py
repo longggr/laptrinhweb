@@ -102,6 +102,9 @@ def calculate_admission(conn):
                 info = candidate_by_id.get(candidate_id)
                 if info is None:
                     continue
+                if info["score"] <= 0:
+                    # Skip candidates without valid admission score to avoid false cutoff=0
+                    continue
                 pool.append(
                     {
                         "candidate_id": candidate_id,
