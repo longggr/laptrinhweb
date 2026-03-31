@@ -15,6 +15,7 @@
                 <th>ID</th>
                 <th>Mã ngành</th>
                 <th>Tên ngành</th>
+                <th>Chỉ tiêu</th>
                 <th>Mô tả</th>
                 <th>Hành động</th>
             </tr>
@@ -25,6 +26,7 @@
                 <td>{{ item.id }}</td>
                 <td>{{ item.ma_nganh }}</td>
                 <td>{{ item.ten_nganh }}</td>
+                <td>{{ item.chi_tieu or 1 }}</td>
                 <td>{{ item.mo_ta or '' }}</td>
                 <td>
                     <a href="{{ url_for('majors.edit_major', id=item.id) }}" class="btn-small">Sửa</a>
@@ -35,7 +37,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="5">Chưa có ngành học nào.</td>
+                <td colspan="6">Chưa có ngành học nào.</td>
             </tr>
             {% endfor %}
         </tbody>

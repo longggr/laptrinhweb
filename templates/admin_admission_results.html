@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Kết quả xét tuyển{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <h2>Kết quả xét tuyển theo ngành</h2>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Mã ngành</th>
+                <th>Tên ngành</th>
+                <th>Chỉ tiêu</th>
+                <th>Số đậu</th>
+                <th>Điểm sàn</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for major in majors %}
+            <tr>
+                <td>{{ major.ma_nganh }}</td>
+                <td>{{ major.ten_nganh }}</td>
+                <td>{{ major.chi_tieu }}</td>
+                <td>{{ admitted_by_major[major.id]|length }}</td>
+                <td>
+                    {% if cutoff_by_major[major.id] is not none %}
+                        {{ "%.2f"|format(cutoff_by_major[major.id]) }}
+                    {% else %}
+                        Chưa có
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Chưa có ngành học.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for major in majors %}
+<div class="page-card">
+    <h3>{{ major.ma_nganh }} - {{ major.ten_nganh }}</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Họ tên</th>
+                <th>SBD</th>
+                <th>CCCD</th>
+                <th>Điểm xét tuyển</th>
+                <th>Nguyện vọng</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in admitted_by_major[major.id] %}
+            <tr>
+                <td>{{ candidate.ho_ten or '' }}</td>
+                <td>{{ candidate.sbd or '' }}</td>
+                <td>{{ candidate.cccd or '' }}</td>
+                <td>{{ "%.2f"|format(candidate.score) }}</td>
+                <td>NV{{ candidate.thu_tu }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Chưa có thí sinh trúng tuyển.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+{% endblock %}

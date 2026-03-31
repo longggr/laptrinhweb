@@ -21,11 +21,13 @@
                     <a href="{{ url_for('search.search_candidate') }}">Tra cứu thí sinh</a>
                     <a href="{{ url_for('candidates.profile') }}">Hồ sơ thí sinh</a>
                     <a href="{{ url_for('preferences.candidate_preferences') }}">Nguyện vọng đăng ký</a>
+                    <a href="{{ url_for('preferences.candidate_admission_result') }}">Kết quả xét tuyển</a>
                 {% elif session.get("role") == "admin" %}
                     <a href="/">Trang chủ</a>
                     <a href="{{ url_for('candidates.admin_candidates') }}">Thí sinh</a>
                     <a href="{{ url_for('majors.admin_majors') }}">Ngành học</a>
                     <a href="{{ url_for('search.search_candidate') }}">Tra cứu</a>
+                    <a href="{{ url_for('preferences.admin_admission_results') }}">Điểm sàn & kết quả</a>
                 {% endif %}
             {% else %}
                 <a href="/">Trang chủ</a>

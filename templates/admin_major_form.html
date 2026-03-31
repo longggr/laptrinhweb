@@ -27,6 +27,11 @@
         </div>
 
         <div class="form-group">
+            <label>Chỉ tiêu</label>
+            <input type="number" name="chi_tieu" min="1" value="{{ major.chi_tieu if major else 1 }}" required>
+        </div>
+
+        <div class="form-group">
             <button type="submit" class="btn-submit">
                 {% if major %}Cập nhật{% else %}Thêm mới{% endif %}
             </button>

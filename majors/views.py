@@ -15,6 +15,14 @@ def get_db_connection():
     return conn
 
 
+def ensure_major_schema(conn):
+    columns = [row["name"] for row in conn.execute("PRAGMA table_info(nganh_hoc)").fetchall()]
+    if "chi_tieu" not in columns:
+        conn.execute("ALTER TABLE nganh_hoc ADD COLUMN chi_tieu INTEGER DEFAULT 1")
+        conn.execute("UPDATE nganh_hoc SET chi_tieu = 1 WHERE chi_tieu IS NULL OR chi_tieu <= 0")
+        conn.commit()
+
+
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -40,9 +48,10 @@ def role_required(role):
 @role_required("admin")
 def admin_majors():
     conn = get_db_connection()
+    ensure_major_schema(conn)
     majors = conn.execute(
         """
-        SELECT id, ma_nganh, ten_nganh, mo_ta
+        SELECT id, ma_nganh, ten_nganh, mo_ta, chi_tieu
         FROM nganh_hoc
         ORDER BY id ASC
         """
@@ -60,21 +69,23 @@ def add_major():
         ma_nganh = request.form.get("ma_nganh", "").strip()
         ten_nganh = request.form.get("ten_nganh", "").strip()
         mo_ta = request.form.get("mo_ta", "").strip()
+        chi_tieu = request.form.get("chi_tieu", "1").strip()
 
         conn = get_db_connection()
+        ensure_major_schema(conn)
         try:
             conn.execute(
                 """
-                INSERT INTO nganh_hoc (ma_nganh, ten_nganh, mo_ta)
-                VALUES (?, ?, ?)
+                INSERT INTO nganh_hoc (ma_nganh, ten_nganh, mo_ta, chi_tieu)
+                VALUES (?, ?, ?, ?)
                 """,
-                (ma_nganh, ten_nganh, mo_ta)
+                (ma_nganh, ten_nganh, mo_ta, max(int(chi_tieu or 1), 1))
             )
             conn.commit()
             flash("Thêm ngành học thành công.", "success")
             return redirect(url_for("majors.admin_majors"))
-        except sqlite3.IntegrityError:
-            flash("Mã ngành đã tồn tại.", "error")
+        except (sqlite3.IntegrityError, ValueError):
+            flash("Mã ngành đã tồn tại hoặc chỉ tiêu không hợp lệ.", "error")
         finally:
             conn.close()
 
@@ -86,10 +97,11 @@ def add_major():
 @role_required("admin")
 def edit_major(id):
     conn = get_db_connection()
+    ensure_major_schema(conn)
 
     major = conn.execute(
         """
-        SELECT id, ma_nganh, ten_nganh, mo_ta
+        SELECT id, ma_nganh, ten_nganh, mo_ta, chi_tieu
         FROM nganh_hoc
         WHERE id = ?
         """,
@@ -104,22 +116,23 @@ def edit_major(id):
         ma_nganh = request.form.get("ma_nganh", "").strip()
         ten_nganh = request.form.get("ten_nganh", "").strip()
         mo_ta = request.form.get("mo_ta", "").strip()
+        chi_tieu = request.form.get("chi_tieu", "1").strip()
 
         try:
             conn.execute(
                 """
                 UPDATE nganh_hoc
-                SET ma_nganh = ?, ten_nganh = ?, mo_ta = ?
+                SET ma_nganh = ?, ten_nganh = ?, mo_ta = ?, chi_tieu = ?
                 WHERE id = ?
                 """,
-                (ma_nganh, ten_nganh, mo_ta, id)
+                (ma_nganh, ten_nganh, mo_ta, max(int(chi_tieu or 1), 1), id)
             )
             conn.commit()
             flash("Cập nhật ngành học thành công.", "success")
             conn.close()
             return redirect(url_for("majors.admin_majors"))
-        except sqlite3.IntegrityError:
-            flash("Mã ngành đã tồn tại.", "error")
+        except (sqlite3.IntegrityError, ValueError):
+            flash("Mã ngành đã tồn tại hoặc chỉ tiêu không hợp lệ.", "error")
 
     conn.close()
     return render_template("admin_major_form.html", major=major)

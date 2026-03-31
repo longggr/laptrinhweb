@@ -18,6 +18,135 @@ def get_db_connection():
     return conn
 
 
+def ensure_major_schema(conn):
+    columns = [row["name"] for row in conn.execute("PRAGMA table_info(nganh_hoc)").fetchall()]
+    if "chi_tieu" not in columns:
+        conn.execute("ALTER TABLE nganh_hoc ADD COLUMN chi_tieu INTEGER DEFAULT 1")
+        conn.execute("UPDATE nganh_hoc SET chi_tieu = 1 WHERE chi_tieu IS NULL OR chi_tieu <= 0")
+        conn.commit()
+
+
+def _to_float(value):
+    try:
+        return float(value or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def calculate_admission(conn):
+    ensure_major_schema(conn)
+
+    majors = conn.execute(
+        """
+        SELECT id, ma_nganh, ten_nganh, COALESCE(chi_tieu, 1) AS chi_tieu
+        FROM nganh_hoc
+        ORDER BY id ASC
+        """
+    ).fetchall()
+
+    candidates = conn.execute(
+        """
+        SELECT id, ho_ten, sbd, cccd, diem_max_xet_tuyen
+        FROM thi_sinh
+        """
+    ).fetchall()
+
+    raw_preferences = conn.execute(
+        """
+        SELECT nv.id, nv.thi_sinh_id, nv.nganh_id, nv.thu_tu, nh.ma_nganh, nh.ten_nganh
+        FROM nguyen_vong nv
+        JOIN nganh_hoc nh ON nv.nganh_id = nh.id
+        ORDER BY nv.thi_sinh_id ASC, nv.thu_tu ASC, nv.id ASC
+        """
+    ).fetchall()
+
+    candidate_by_id = {
+        row["id"]: {
+            "id": row["id"],
+            "ho_ten": row["ho_ten"],
+            "sbd": row["sbd"],
+            "cccd": row["cccd"],
+            "score": _to_float(row["diem_max_xet_tuyen"])
+        }
+        for row in candidates
+    }
+
+    preferences_by_candidate = {}
+    max_order = 0
+    for row in raw_preferences:
+        max_order = max(max_order, row["thu_tu"])
+        preferences_by_candidate.setdefault(row["thi_sinh_id"], []).append(
+            {
+                "nganh_id": row["nganh_id"],
+                "thu_tu": row["thu_tu"],
+                "ma_nganh": row["ma_nganh"],
+                "ten_nganh": row["ten_nganh"]
+            }
+        )
+
+    assigned = {}
+    admitted_by_major = {major["id"]: [] for major in majors}
+
+    for order in range(1, max_order + 1):
+        for major in majors:
+            major_id = major["id"]
+            quota = max(int(major["chi_tieu"] or 1), 1)
+            pool = list(admitted_by_major[major_id])
+
+            for candidate_id, prefs in preferences_by_candidate.items():
+                if candidate_id in assigned:
+                    continue
+                pref = next((item for item in prefs if item["thu_tu"] == order and item["nganh_id"] == major_id), None)
+                if pref is None:
+                    continue
+                info = candidate_by_id.get(candidate_id)
+                if info is None:
+                    continue
+                pool.append(
+                    {
+                        "candidate_id": candidate_id,
+                        "ho_ten": info["ho_ten"],
+                        "sbd": info["sbd"],
+                        "cccd": info["cccd"],
+                        "score": info["score"],
+                        "thu_tu": order
+                    }
+                )
+
+            pool.sort(key=lambda x: (-x["score"], x["thu_tu"], x["candidate_id"]))
+            selected = pool[:quota]
+            selected_ids = {item["candidate_id"] for item in selected}
+            previous_ids = {item["candidate_id"] for item in admitted_by_major[major_id]}
+
+            for removed_id in previous_ids - selected_ids:
+                assigned.pop(removed_id, None)
+            for item in selected:
+                assigned[item["candidate_id"]] = {"nganh_id": major_id, "thu_tu": item["thu_tu"]}
+
+            admitted_by_major[major_id] = selected
+
+    cutoff_by_major = {}
+    for major in majors:
+        admitted = admitted_by_major[major["id"]]
+        cutoff_by_major[major["id"]] = min((item["score"] for item in admitted), default=None)
+
+    candidate_result = {}
+    for candidate_id, assignment in assigned.items():
+        major_id = assignment["nganh_id"]
+        pref = next(
+            (p for p in preferences_by_candidate.get(candidate_id, []) if p["nganh_id"] == major_id),
+            None
+        )
+        candidate_result[candidate_id] = {
+            "nganh_id": major_id,
+            "thu_tu": assignment["thu_tu"],
+            "ma_nganh": pref["ma_nganh"] if pref else "",
+            "ten_nganh": pref["ten_nganh"] if pref else ""
+        }
+
+    return majors, admitted_by_major, cutoff_by_major, candidate_result
+
+
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -186,3 +315,30 @@ def admin_preferences():
 
     conn.close()
     return render_template("admin_preferences.html", preferences=preferences, keyword=keyword)
+
+
+@preferences_bp.route("/admin/results")
+@login_required
+@role_required("admin")
+def admin_admission_results():
+    conn = get_db_connection()
+    majors, admitted_by_major, cutoff_by_major, _ = calculate_admission(conn)
+    conn.close()
+    return render_template(
+        "admin_admission_results.html",
+        majors=majors,
+        admitted_by_major=admitted_by_major,
+        cutoff_by_major=cutoff_by_major
+    )
+
+
+@preferences_bp.route("/candidate/result")
+@login_required
+@role_required("candidate")
+def candidate_admission_result():
+    thi_sinh_id = session.get("thi_sinh_id")
+    conn = get_db_connection()
+    _, _, _, candidate_result = calculate_admission(conn)
+    result = candidate_result.get(thi_sinh_id)
+    conn.close()
+    return render_template("candidate_admission_result.html", result=result)

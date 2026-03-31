@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Kết quả xét tuyển của tôi{% endblock %}
+
+{% block content %}
+<div class="page-card">
+    <h2>Kết quả xét tuyển</h2>
+
+    {% if result %}
+        <p><strong>Trạng thái:</strong> Đã trúng tuyển</p>
+        <p><strong>Ngành trúng tuyển:</strong> {{ result.ma_nganh }} - {{ result.ten_nganh }}</p>
+        <p><strong>Theo nguyện vọng:</strong> NV{{ result.thu_tu }}</p>
+    {% else %}
+        <p><strong>Trạng thái:</strong> Chưa trúng tuyển ngành nào.</p>
+    {% endif %}
+</div>
+{% endblock %}
