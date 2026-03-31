@@ -3,14 +3,81 @@
 {% block title %}Trang chủ{% endblock %}
 
 {% block content %}
-<div class="page-card">
-    <h1>Hệ thống quản lý hồ sơ thí sinh xét tuyển</h1>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">🎓 Hệ thống xét tuyển NEU</h1>
+        <p class="hero-subtitle">Nền tảng quản lý hồ sơ thí sinh hiện đại và minh bạch</p>
+        {% if not session.get("user_id") %}
+            <a href="{{ url_for('auth.login') }}" class="btn-hero">Đăng nhập ngay</a>
+        {% endif %}
+    </div>
+</div>
 
+<!-- Welcome Card -->
+<div class="page-card welcome-card">
     {% if session.get("user_id") %}
-        <p>Xin chào, <strong>{{ session.get("display_name") }}</strong>.</p>
-        <p>Vai trò: <strong>{{ session.get("role") }}</strong></p>
+        <div class="welcome-message">
+            <span class="welcome-icon">👋</span>
+            <div>
+                <h2>Xin chào, {{ session.get("display_name") }}!</h2>
+                <p>Vai trò: <strong>{{ session.get("role") }}</strong></p>
+            </div>
+        </div>
     {% else %}
-        <p>Vui lòng đăng nhập để sử dụng hệ thống.</p>
+        <p class="text-center">Vui lòng <a href="{{ url_for('auth.login') }}" class="link-primary">đăng nhập</a> để sử dụng hệ thống.</p>
     {% endif %}
+</div>
+
+<!-- News Section -->
+<div class="news-section">
+    <div class="section-header-home">
+        <h2>📰 Tin tức & Thông báo</h2>
+        <a href="#" class="link-more">Xem tất cả →</a>
+    </div>
+
+    <div class="news-grid">
+        <!-- Article 1 -->
+        <div class="news-card">
+            <div class="news-image" style="background: linear-gradient(135deg, #1f5fa5, #2c74c9);"></div>
+            <div class="news-body">
+                <div class="news-tags">
+                    <span class="tag tag-primary">Thông báo</span>
+                </div>
+                <h3 class="news-title">Kỳ xét tuyển 2026 - Hạn cuối nộp hồ sơ</h3>
+                <p class="news-date">📅 31/03/2026</p>
+                <p class="news-excerpt">Các thí sinh vui lòng hoàn tất nộp hồ sơ trước ngày 30/04/2026. Hỗ trợ xét tuyển theo nhiều danh mục khác nhau.</p>
+                <a href="#" class="btn-read-more">Đọc thêm</a>
+            </div>
+        </div>
+
+        <!-- Article 2 -->
+        <div class="news-card">
+            <div class="news-image" style="background: linear-gradient(135deg, #2c74c9, #1a4a8a);"></div>
+            <div class="news-body">
+                <div class="news-tags">
+                    <span class="tag tag-success">Hướng dẫn</span>
+                </div>
+                <h3 class="news-title">Hướng dẫn sử dụng hệ thống</h3>
+                <p class="news-date">📅 28/03/2026</p>
+                <p class="news-excerpt">Tìm hiểu cách sử dụng hệ thống quản lý hồ sơ xét tuyển mới. Video hướng dẫn chi tiết từng bước.</p>
+                <a href="#" class="btn-read-more">Đọc thêm</a>
+            </div>
+        </div>
+
+        <!-- Article 3 -->
+        <div class="news-card">
+            <div class="news-image" style="background: linear-gradient(135deg, #174a84, #1f5fa5);"></div>
+            <div class="news-body">
+                <div class="news-tags">
+                    <span class="tag tag-info">Cập nhật</span>
+                </div>
+                <h3 class="news-title">Cập nhật danh sách ngành học xét tuyển</h3>
+                <p class="news-date">📅 25/03/2026</p>
+                <p class="news-excerpt">Có 45 ngành học mở tuyển năm nay với nhiều chỉ tiêu chi tiết từng ngành.</p>
+                <a href="#" class="btn-read-more">Đọc thêm</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
